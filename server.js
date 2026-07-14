@@ -49,6 +49,18 @@ app.delete("/tasks/:id",async(req,res)=>{
     }
 })
 
+app.put("/tasks/:id",async(req,res)=>{
+    try{
+        const {date,area} = req.body
+        const result = await pool.query(
+            `UPDATE tasks SET date=$1,area=$2 WHERE id=$3 RETURNING *`,[date,area,req.params.id])
+        res.json(result.rows[0])
+    }
+    catch(error){
+        res.status(500).json({message:error.message})
+    }
+})
+
 const PORT = process.env.PORT || 3000
 app.listen(PORT,()=>{
     console.log(`server running on PORT ${PORT}`)
